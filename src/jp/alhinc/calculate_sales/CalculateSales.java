@@ -41,7 +41,7 @@ public class CalculateSales {
 		}
 
 		// ※ここから集計処理を作成してください。(処理内容2-1、2-2)
-		File[] files = new File("C:\\Users\\trainee1291\\Desktop\\inputfile").listFiles();
+		File[] files = new File(args[0]).listFiles();
 
 		//売上ファイルだけが入っている(まだfile型)
 		List<File> rcdFiles = new ArrayList<>();
@@ -51,7 +51,7 @@ public class CalculateSales {
 			String fileName = files[i].getName();
 
 			//売上ファイルを判定する処理
-			if(fileName.matches("[0-9]{8}.rcd")) {
+			if(fileName.matches("^[0-9]{8}[.]rcd$")) {
 				rcdFiles.add(files[i]);
 			}
 		}
@@ -64,7 +64,7 @@ public class CalculateSales {
 
 			try {
 				//売上ファイルを開く
-				File file = new File("C:\\Users\\trainee1291\\Desktop\\inputfile", rcdFiles.get(i).getName());
+				File file = new File(args[0], rcdFiles.get(i).getName());
 
 				FileReader fr = new FileReader(file);
 				br = new BufferedReader(fr);
@@ -182,7 +182,7 @@ public class CalculateSales {
 			}
 		} catch(IOException e) {
 			System.out.println(UNKNOWN_ERROR);
-				return false;
+			return false;
 		} finally {
 			// ファイルを開いている場合
 			if(bw != null) {
