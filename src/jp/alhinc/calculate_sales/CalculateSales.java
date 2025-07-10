@@ -57,10 +57,16 @@ public class CalculateSales {
 			//ファイルの名前を取得する処理
 			String fileName = files[i].getName();
 
-			//売上ファイルを判定する処理
-			if (fileName.matches("^[0-9]{8}[.]rcd$")) {
-				rcdFiles.add(files[i]);
+			//ファイルなのかディレクトリなのかを確認し、ファイル以外ならエラーを表示
+			if (fileName.isFile() && fileName.matches("^[0-9]{8}[.]rcd$")) {
+				System.out.println(UNKNOWN_ERROR);
+				return;
 			}
+
+				//売上ファイルを判定する処理
+				if (fileName.matches("^[0-9]{8}[.]rcd$")) {
+					rcdFiles.add(files[i]);
+				}
 		}
 
 		//売上ファイルのファイル名が連番になっていないエラーを表示
@@ -111,6 +117,12 @@ public class CalculateSales {
 
 				//読み込んだ売上金額をMapに加算するために型の変換を行う。
 				long fileSale = Long.parseLong(saleFile.get(1));
+
+				//売上金額が数字なのか確認する
+				if(!saleFile.get(1).matches("^[0-9]*$")) {
+					System.out.println(UNKNOWN_ERROR);
+					return;
+				}
 
 				//読み込んだ売上金額を加算
 				Long saleAmount = branchSales.get(saleFile.get(0)) + fileSale;
