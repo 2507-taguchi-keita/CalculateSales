@@ -129,7 +129,7 @@ public class CalculateSales {
 			br = new BufferedReader(fr);
 
 			String line;
-			// 一行ずつ読み込む
+			// 一行ずつ読込
 			while((line = br.readLine()) != null) {
 				// ※ここの読み込み処理を変更してください。(処理内容1-2)
 				String[] items = line.split(",");
