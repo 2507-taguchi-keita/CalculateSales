@@ -110,9 +110,8 @@ public class CalculateSales {
 					return;
 				}
 
-
 				//売上金額が数字なのか確認し、数字以外ならエラーを表示
-				if(!saleFile.get(1).matches("\\d+")) {
+				if (!saleFile.get(1).matches("\\d+")) {
 					System.out.println(UNKNOWN_ERROR);
 					return;
 				}
