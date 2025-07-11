@@ -28,6 +28,10 @@ public class CalculateSales {
 	private static final String FILE_NOT_SERIALNUMBER = "売上ファイル名が連番になっていません";
 	//合計金額が10桁を超えましたのエラーメッセージ
 	private static final String TOTAL_AMOUNT_EXCEED = "合計金額が10桁を超えました";
+	//"のフォーマットが不正です。
+	private static final String INVALID_FORMAT = "のフォーマットが不正です";
+	//の支店コードが不正です
+	private static final String INVALID_CODE = "の支店コードが不正です";
 
 	/**
 	 * メインメソッド
@@ -58,9 +62,6 @@ public class CalculateSales {
 		//売上ファイルだけが入っている(まだfile型)
 		List<File> rcdFiles = new ArrayList<>();
 
-		//連番チェックを⾏う前に、売上ファイルを保持しているListをソートする
-		Collections.sort(rcdFiles);
-
 		for (int i = 0; i < files.length; i++) {
 			//ファイルの名前を取得する処理
 			String fileName = files[i].getName();
@@ -72,8 +73,11 @@ public class CalculateSales {
 			}
 		}
 
+		//連番チェックを⾏う前に、売上ファイルを保持しているListをソートする
+		Collections.sort(rcdFiles);
+
 		//売上ファイルのファイル名が連番になっていないエラーを表示
-		for (int i = 0; i < rcdFiles.size() - 1; i++) {
+		for (int i = 0; i < rcdFiles.size() -1; i++) {
 
 			int former = Integer.parseInt(rcdFiles.get(i).getName().substring(0, 8));
 			int latter = Integer.parseInt(rcdFiles.get(i + 1).getName().substring(0, 8));
@@ -110,13 +114,13 @@ public class CalculateSales {
 
 				//売上ファイルのフォーマットが異なるというエラーを表示
 				if (saleFile.size() != 2) {
-					System.out.println(rcdFileName + "のフォーマットが不正です");
+					System.out.println(rcdFileName + INVALID_FORMAT);
 					return;
 				}
 
 				//⽀店に該当がなかった場合は、エラーメッセージ「<該当ファイル名>の⽀店コードが不正です」と表示
 				if (!branchNames.containsKey(saleFile.get(0))) {
-					System.out.println(rcdFileName + "の支店コードが不正です");
+					System.out.println(rcdFileName + INVALID_CODE);
 					return;
 				}
 
