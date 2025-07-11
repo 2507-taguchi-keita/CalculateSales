@@ -20,6 +20,12 @@ public class CalculateSales {
 	// 支店別集計ファイル名
 	private static final String FILE_NAME_BRANCH_OUT = "branch.out";
 
+	//商品定義ファイル名
+	private static final String FILE_NAME_COMMODITY_LST = "commodity.lst";
+
+	//商品別集計ファイル名
+	private static final String FILE_NAME_COMMODITY_OUT = "commodity.out";
+
 	// エラーメッセージ
 	private static final String UNKNOWN_ERROR = "予期せぬエラーが発生しました";
 	private static final String FILE_NOT_EXIST = "支店定義ファイルが存在しません";
@@ -51,8 +57,18 @@ public class CalculateSales {
 		// 支店コードと売上金額を保持するMap
 		Map<String, Long> branchSales = new HashMap<>();
 
+		//商品コードと商品名を保持するMap
+		Map<String, String> commodityNames = new HashMap<>();
+		//
+		Map<String, Long> commoditySales = new HashMap<>();
+
 		// 支店定義ファイル読み込み処理
 		if (!readFile(args[0], FILE_NAME_BRANCH_LST, branchNames, branchSales)) {
+			return;
+		}
+
+		//商品定義ファイル読み込み処理
+		if(!readFile(args[0], FILE_NAME_COMMODITY_LST, commodityNames, branchSales)) {
 			return;
 		}
 
@@ -113,7 +129,7 @@ public class CalculateSales {
 				}
 
 				//売上ファイルのフォーマットが異なるというエラーを表示
-				if (saleFile.size() != 2) {
+				if (saleFile.size() != 3) {
 					System.out.println(rcdFileName + INVALID_FORMAT);
 					return;
 				}
@@ -134,7 +150,8 @@ public class CalculateSales {
 				long fileSale = Long.parseLong(saleFile.get(1));
 
 				//読み込んだ売上金額を加算
-				Long saleAmount = branchSales.get(saleFile.get(0)) + fileSale;
+				Long saleAmount = branchSales.get(saleFile.get(0)) +  fileSale;
+				Long dsaleAmount = commoditySales.get(saleFile.get(1)) + fileSale;
 
 				//合計⾦額が10桁を超えた場合、エラーメッセージ「合計金額が10桁を超えました」を表示
 				if (saleAmount >= 10000000000L) {
@@ -168,7 +185,7 @@ public class CalculateSales {
 	} //mainメソッド
 
 	/**
-	 * 支店定義ファイル読み込み処理
+	 * 支店・商品定義ファイル読み込み処理
 	 *
 	 * @param フォルダパス
 	 * @param ファイル名
@@ -176,8 +193,8 @@ public class CalculateSales {
 	 * @param 支店コードと売上金額を保持するMap
 	 * @return 読み込み可否
 	 */
-	private static boolean readFile(String path, String fileName, Map<String, String> branchNames,
-			Map<String, Long> branchSales) {
+	private static boolean readFile(String path, String fileName, Map<String, String> name,
+			Map<String, Long> sales) {
 		BufferedReader br = null;
 
 		try {
@@ -204,8 +221,8 @@ public class CalculateSales {
 					return false;
 				}
 
-				branchNames.put(items[0], items[1]);
-				branchSales.put(items[0], 0L);
+				name.put(items[0], items[1]);
+				sales.put(items[0], 0L);
 			}
 
 		} catch (IOException e) {
