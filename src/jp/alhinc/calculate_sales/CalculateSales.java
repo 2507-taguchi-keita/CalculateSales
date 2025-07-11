@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,10 @@ public class CalculateSales {
 	private static final String UNKNOWN_ERROR = "予期せぬエラーが発生しました";
 	private static final String FILE_NOT_EXIST = "支店定義ファイルが存在しません";
 	private static final String FILE_INVALID_FORMAT = "支店定義ファイルのフォーマットが不正です";
+	//ファイル名が連番になっていないエラーメッセージ
+	private static final String FILE_NOT_SERIALNUMBER = "売上ファイル名が連番になっていません";
+	//合計金額が10桁を超えましたのエラーメッセージ
+	private static final String TOTAL_AMOUNT_EXCEED = "合計金額が10桁を超えました";
 
 	/**
 	 * メインメソッド
@@ -53,6 +58,9 @@ public class CalculateSales {
 		//売上ファイルだけが入っている(まだfile型)
 		List<File> rcdFiles = new ArrayList<>();
 
+		//連番チェックを⾏う前に、売上ファイルを保持しているListをソートする
+		Collections.sort(rcdFiles);
+
 		for (int i = 0; i < files.length; i++) {
 			//ファイルの名前を取得する処理
 			String fileName = files[i].getName();
@@ -71,7 +79,7 @@ public class CalculateSales {
 			int latter = Integer.parseInt(rcdFiles.get(i + 1).getName().substring(0, 8));
 
 			if ((latter - former) != 1) {
-				System.out.println("売上ファイル名が連番になっていません");
+				System.out.println(FILE_NOT_SERIALNUMBER);
 				return;
 			}
 		}
@@ -83,8 +91,10 @@ public class CalculateSales {
 			BufferedReader br = null;
 
 			try {
+				String rcdFileName = rcdFiles.get(i).getName();
+
 				//売上ファイルを開く
-				File file = new File(args[0], rcdFiles.get(i).getName());
+				File file = new File(args[0], rcdFileName);
 				FileReader fr = new FileReader(file);
 				br = new BufferedReader(fr);
 
@@ -100,18 +110,18 @@ public class CalculateSales {
 
 				//売上ファイルのフォーマットが異なるというエラーを表示
 				if (saleFile.size() != 2) {
-					System.out.println(rcdFiles.get(i).getName() + "のフォーマットが不正です");
+					System.out.println(rcdFileName + "のフォーマットが不正です");
 					return;
 				}
 
 				//⽀店に該当がなかった場合は、エラーメッセージ「<該当ファイル名>の⽀店コードが不正です」と表示
 				if (!branchNames.containsKey(saleFile.get(0))) {
-					System.out.println(rcdFiles.get(i).getName() + "の支店コードが不正です");
+					System.out.println(rcdFileName + "の支店コードが不正です");
 					return;
 				}
 
 				//売上金額が数字なのか確認し、数字以外ならエラーを表示
-				if (!saleFile.get(1).matches("\\d+")) {
+				if (!saleFile.get(1).matches("^\\d+$")) {
 					System.out.println(UNKNOWN_ERROR);
 					return;
 				}
@@ -124,7 +134,7 @@ public class CalculateSales {
 
 				//合計⾦額が10桁を超えた場合、エラーメッセージ「合計金額が10桁を超えました」を表示
 				if (saleAmount >= 10000000000L) {
-					System.out.println("合計金額が10桁を超えました");
+					System.out.println(TOTAL_AMOUNT_EXCEED);
 					return;
 				}
 
