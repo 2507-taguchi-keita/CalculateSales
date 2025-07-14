@@ -271,8 +271,8 @@ public class CalculateSales {
 	 * @param 支店コードと売上金額を保持するMap
 	 * @return 書き込み可否
 	 */
-	private static boolean writeFile(String path, String fileName, Map<String, String> Names,
-			Map<String, Long> Sales) {
+	private static boolean writeFile(String path, String fileName, Map<String, String> names,
+			Map<String, Long> sales) {
 		// ※ここに書き込み処理を作成してください。(処理内容3-1)
 		BufferedWriter bw = null;
 
@@ -282,8 +282,8 @@ public class CalculateSales {
 			bw = new BufferedWriter(fw);
 
 			//MapからKeyの⼀覧を取得してKeyの数だけ書き込みを繰り返す
-			for (String key : Names.keySet()) {
-				bw.write(key + "," + Names.get(key) + "," + Sales.get(key));
+			for (String key : names.keySet()) {
+				bw.write(key + "," + names.get(key) + "," + sales.get(key));
 				bw.newLine();
 
 			}
